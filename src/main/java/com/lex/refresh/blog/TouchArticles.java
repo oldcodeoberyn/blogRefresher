@@ -3,7 +3,9 @@ package com.lex.refresh.blog;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ public class TouchArticles {
     public static void main(String[] args) {
         URL url;
         Articles articles = new Articles();
+        articles.retrieveArticleNameFromWeb();
         List<String> browserInfoList = new ArrayList<String>();
         browserInfoList.add("Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
         browserInfoList.add("Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727; Media Center PC 6.0)");
@@ -28,13 +31,15 @@ public class TouchArticles {
             for (art_iterator = articles.getArticles().iterator(); art_iterator.hasNext(); ) {
                 try {
                     url = new URL(art_iterator.next());
-                    URLConnection connection = url.openConnection();
+                    Proxy proxy = new Proxy( Proxy.Type.HTTP, new InetSocketAddress("10.144.1.10",8080) );
+                    URLConnection connection = url.openConnection(proxy);
                     if(br_iterator.hasNext()){
                         connection.setRequestProperty("User-Agent", br_iterator.next());
                     }else {
                         br_iterator = browserInfoList.iterator();
                         connection.setRequestProperty("User-Agent", br_iterator.next());
                     }
+
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 //                    String nl;
 //                    while ((nl = bufferedReader.readLine()) != null) {
